@@ -9,8 +9,8 @@ const char* mqtt_server = "mqtt.cloud.kaaiot.com";
 const String TOKEN = "esp8266_2";        // Endpoint token - you get (or specify) it during device provisioning
 const String APP_VERSION = "btngtro547tsntf25rtg-v1";  // Application version - you specify it during device provisioning
 
-const unsigned long fiveSeconds = 1 * 5 * 1000UL;
-static unsigned long lastPublish = 0 - fiveSeconds;
+const unsigned long sendingPeriod = 1 * 1 * 1000UL;
+static unsigned long lastPublish = 0 - sendingPeriod;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -38,8 +38,8 @@ void loop() {
   client.loop();
 
   unsigned long now = millis();
-  if (now - lastPublish >= fiveSeconds) {
-    lastPublish += fiveSeconds;
+  if (now - lastPublish >= sendingPeriod) {
+    lastPublish += sendingPeriod;
     
     // read temperature and humidity takes about 250 milliseconds!
     float h = dht.readHumidity();     // humidity percentage
@@ -69,7 +69,7 @@ void loop() {
 
     String topic = "kp1/" + APP_VERSION + "/dcx/" + TOKEN + "/json";
     client.publish(topic.c_str(), telemetry.as<String>().c_str());
-    Serial.println("Published on topic: " + topic);
+    //Serial.println("Published on topic: " + topic);
     Serial.println("Values: " + telemetry.as<String>());
   }
 }
